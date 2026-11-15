@@ -120,11 +120,21 @@
 
     .custom-navbar {
         flex-direction: row;
+        padding: 10px 16px;
+
     }
 
     .hamburger-menu {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      padding: 0;
+      font-size: 22px;
+      border-radius: 10px;
     }
+
 
     .custom-nav-links.active {
       display: flex;
