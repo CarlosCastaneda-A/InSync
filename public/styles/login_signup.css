@@ -1,3 +1,7 @@
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 body{
     font-family:'Arial',sans-serif;
     color: #fff;
@@ -17,7 +21,8 @@ body{
     display: flex;
     justify-content: center; 
     align-items: center;
-    height: 100vh; 
+    min-height: 100vh;
+    min-height: 100dvh;
     padding: 20px;
 }
 .form-container {
@@ -36,26 +41,31 @@ body{
 }
 .input-group {
     margin-bottom: 15px; 
-    margin-right: 20px;
 }
 
-.input-group input {
+.input-group input,
+.input-group select {
     width: 100%; 
-    padding: 10px;
+    min-height: 44px;
+    padding: 10px 12px;
     margin: 5px 0;
     border: 1px solid #ccc; 
     border-radius: 4px; 
     font-size: 16px;
 }
-.input-group input:focus {
+
+.input-group input:focus,
+.input-group select:focus {
      border-color: #ffcc00;
      outline: none;
 }
+
 
 .btn{
     background-color: #ffcc00;
     color: #333;
     padding: 10px 20px;
+    min-height: 44px;
     border: none;
     border-radius: 4px; 
     cursor: pointer; 
@@ -83,6 +93,7 @@ body{
 .form-footer p a {
     color: #ffcc00;
     text-decoration: none; 
+    padding: 8px 4px;
     font-size: 14px; 
     margin-top: 10px; 
     display: inline-block;
@@ -120,4 +131,17 @@ body{
 
 .secondary-btn:hover {
     background-color: #ffe27a;
+}
+/*Small screen media query */
+@media (max-width: 480px) {
+    .form-section {
+        padding: 12px;
+        align-items: flex-start;
+    }
+    .form-container {
+        padding: 20px;
+    }
+    .form-title {
+        font-size: 24px;
+    }
 }
