@@ -531,7 +531,7 @@ app.get("/edit-account", async (req, res) => {
 app.post("/edit-account", async (req, res) => {
   if (!req.session.user) return res.redirect("/login");
 
-  let { full_name, email, gender, age, country } = req.body;
+  let { full_name, email, gender, age, country, current_password, password } = req.body;
   full_name = full_name?.trim();
   email = email?.trim().toLowerCase();
   gender = gender?.trim();
@@ -553,10 +553,48 @@ app.post("/edit-account", async (req, res) => {
   }
 
   try {
-    await db.query(
-      "UPDATE users SET full_name = ?, email = ?, gender = ?, age = ?, country = ? WHERE id = ?",
-      [full_name, email, gender, age, country, req.session.user.id]
-    );
+    let hashedPassword = null;
+
+    if (password) {
+      if (password.length < 6) {
+        return res.render("edit-account", {
+          user: req.session.user,
+          error: "Password must be at least 6 characters long."
+        });
+      }
+
+      const [users] = await db.query(
+        "SELECT password FROM users WHERE id = ?",
+        [req.session.user.id]
+      );
+
+      if (users.length === 0) {
+        return res.redirect("/login");
+      }
+
+      const isMatch = await bcrypt.compare(current_password || "", users[0].password);
+
+      if (!isMatch) {
+        return res.render("edit-account", {
+          user: req.session.user,
+          error: "Current password is incorrect."
+        });
+      }
+
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
+
+    if (hashedPassword) {
+      await db.query(
+        "UPDATE users SET full_name = ?, email = ?, gender = ?, age = ?, country = ?, password = ? WHERE id = ?",
+        [full_name, email, gender, age, country, hashedPassword, req.session.user.id]
+      );
+    } else {
+      await db.query(
+        "UPDATE users SET full_name = ?, email = ?, gender = ?, age = ?, country = ? WHERE id = ?",
+        [full_name, email, gender, age, country, req.session.user.id]
+      );
+    }
 
     // Also update session values
     req.session.user.full_name = full_name;
